@@ -15,6 +15,8 @@ namespace XNA_TrabM2
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        public static Texture2D tileParede;
+        Tilemap map = new Tilemap();
 
         public Game1()
         {
@@ -30,6 +32,7 @@ namespace XNA_TrabM2
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            tileParede = Content.Load<Texture2D>(@"parede");
         }
 
         protected override void UnloadContent() { }
@@ -39,12 +42,14 @@ namespace XNA_TrabM2
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
             base.Update(gameTime);
+            map.loadMap("mapa");
         }
 
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
             base.Draw(gameTime);
+            map.onDraw(spriteBatch);
         }
     }
 }
