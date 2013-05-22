@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using System.IO;
 
 namespace XNA_TrabM2
 {
@@ -15,8 +16,12 @@ namespace XNA_TrabM2
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        public static Texture2D tileParede;
-        Tilemap map = new Tilemap();
+
+        Texture2D tileBlock;
+        List<Tile> tileMap;
+        
+        char[][] map2;
+        char[,] map;
 
         public Game1()
         {
@@ -32,7 +37,23 @@ namespace XNA_TrabM2
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            tileParede = Content.Load<Texture2D>(@"parede");
+            tileBlock = Content.Load<Texture2D>(@"Tiles\Block");
+            
+            tileMap = new List<Tile>();
+
+            map2 = File.ReadAllLines(@"Content/TextFiles/mapa.txt").Select(l => l.Split(',').Select(i => char.Parse(i)).ToArray()).ToArray();
+            map = JaggedToMultidimensional(map2);
+
+            for (int i = 0; i < map.GetLength(0); i++)
+            {
+                for (int j = 0; j < map.GetLength(1); j++)
+                {
+                    if (map[i, j] == 'P')
+                    {
+                        tileMap.Add(new Tile(tileBlock, new Vector2(j, i), TileCollision.Impassable));
+                    }
+                }
+            }
         }
 
         protected override void UnloadContent() { }
@@ -42,14 +63,36 @@ namespace XNA_TrabM2
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
             base.Update(gameTime);
-            map.loadMap("mapa");
         }
 
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
             base.Draw(gameTime);
-            map.onDraw(spriteBatch);
+            
+            spriteBatch.Begin();
+            {
+                foreach (Tile t in tileMap)
+                {
+                    t.Draw(spriteBatch);
+                }
+            }
+            spriteBatch.End();
+        }
+
+        private char[,] JaggedToMultidimensional(char[][] jaggedArray)
+        {
+            int rows = jaggedArray.Length;
+            int cols = jaggedArray.Max(subArray => subArray.Length);
+            char[,] array = new char[rows, cols];
+            for (int i = 0; i < rows; i++)
+            {
+                for (int j = 0; j < cols; j++)
+                {
+                    array[i, j] = jaggedArray[i][j];
+                }
+            }
+            return array;
         }
     }
 }
