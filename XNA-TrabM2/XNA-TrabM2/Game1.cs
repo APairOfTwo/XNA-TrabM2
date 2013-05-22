@@ -19,9 +19,7 @@ namespace XNA_TrabM2
 
         Texture2D tileBlock;
         List<Tile> tileMap;
-        
-        char[][] map2;
-        char[,] map;
+        char[][] map;
 
         public Game1()
         {
@@ -41,14 +39,15 @@ namespace XNA_TrabM2
             
             tileMap = new List<Tile>();
 
-            map2 = File.ReadAllLines(@"Content/TextFiles/mapa.txt").Select(l => l.Split(',').Select(i => char.Parse(i)).ToArray()).ToArray();
-            map = JaggedToMultidimensional(map2);
+            map = File.ReadAllLines(@"Content/TextFiles/mapa.txt").Select(l => l.Split(',').Select(i => char.Parse(i)).ToArray()).ToArray();
+            int rows = map.Length;
+            int cols = map.Max(subArray => subArray.Length);
 
-            for (int i = 0; i < map.GetLength(0); i++)
+            for (int i = 0; i < rows; i++)
             {
-                for (int j = 0; j < map.GetLength(1); j++)
+                for (int j = 0; j < cols; j++)
                 {
-                    if (map[i, j] == 'P')
+                    if (map[i][j] == 'P')
                     {
                         tileMap.Add(new Tile(tileBlock, new Vector2(j, i), TileCollision.Impassable));
                     }
@@ -78,21 +77,6 @@ namespace XNA_TrabM2
                 }
             }
             spriteBatch.End();
-        }
-
-        private char[,] JaggedToMultidimensional(char[][] jaggedArray)
-        {
-            int rows = jaggedArray.Length;
-            int cols = jaggedArray.Max(subArray => subArray.Length);
-            char[,] array = new char[rows, cols];
-            for (int i = 0; i < rows; i++)
-            {
-                for (int j = 0; j < cols; j++)
-                {
-                    array[i, j] = jaggedArray[i][j];
-                }
-            }
-            return array;
         }
     }
 }
