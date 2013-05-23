@@ -27,8 +27,6 @@ namespace XNA_TrabM2
 
         Rectangle timeRect;
 
-        public static bool right, left, up, down;
-
         Telas telas;
 
         bool startGame = true;
@@ -90,54 +88,34 @@ namespace XNA_TrabM2
 
         protected override void UnloadContent() { }
 
-        private void GetInput()
-        {
-            KeyboardState keyboardState = Keyboard.GetState();
-
-            if (keyboardState.IsKeyDown(Keys.Left) || keyboardState.IsKeyDown(Keys.A))
-            {
-                left = true;
-            }
-            if (keyboardState.IsKeyDown(Keys.Right) || keyboardState.IsKeyDown(Keys.D))
-            {
-                right = true;
-            }
-            if (keyboardState.IsKeyDown(Keys.Up) || keyboardState.IsKeyDown(Keys.W))
-            {
-                up = true;
-            }
-            if (keyboardState.IsKeyDown(Keys.Down) || keyboardState.IsKeyDown(Keys.S))
-            {
-                down = true;
-            }
-            if (keyboardState.IsKeyUp(Keys.Left) && keyboardState.IsKeyUp(Keys.A))
-            {
-                left = false;
-            }
-            if (keyboardState.IsKeyUp(Keys.Right) && keyboardState.IsKeyUp(Keys.D))
-            {
-                right = false;
-            }
-            if (keyboardState.IsKeyUp(Keys.Up) && keyboardState.IsKeyUp(Keys.W))
-            {
-                up = false;
-            }
-            if (keyboardState.IsKeyUp(Keys.Down) && keyboardState.IsKeyUp(Keys.S))
-            {
-                down = false;
-            }
-        }
-
-
         protected override void Update(GameTime gameTime)
         {
-            GetInput();
+            Input.Update(gameTime);
             player.Update();
 
             if (!gameOver)
             {
                 if (startGame)
                 {
+                    #region Player Inputs
+                    if (Input.KeyboardLeftJustPressed)
+                    {
+                        player.blockPosition.X -= 1;
+                    }
+                    if (Input.KeyboardRightJustPressed)
+                    {
+                        player.blockPosition.X += 1;
+                    }
+                    if (Input.KeyboardUpJustPressed)
+                    {
+                        player.blockPosition.Y -= 1;
+                    }
+                    if (Input.KeyboardDownJustPressed)
+                    {
+                        player.blockPosition.Y += 1;
+                    }
+                    #endregion
+
                     if (timeRect.Height > 0)
                         timeRect.Height -= 1;
                 }
