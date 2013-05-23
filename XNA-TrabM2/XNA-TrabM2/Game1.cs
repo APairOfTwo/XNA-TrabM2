@@ -16,10 +16,11 @@ namespace XNA_TrabM2
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        SpriteFont verdana;
 
         Texture2D tileBlock;
         Texture2D playerSprite;
-        Texture2D barraTempo;
+        Texture2D timeBar;
 
         Player player;
         List<Tile> tileMap;
@@ -28,6 +29,10 @@ namespace XNA_TrabM2
         Rectangle timeRect;
 
         Telas telas;
+
+        long totalTime = 1000;
+        long timePassed = 0;
+        int totalSecondsLeft = 10;
 
         bool startGame = true;
         bool gameOver = false;
@@ -41,7 +46,7 @@ namespace XNA_TrabM2
         protected override void Initialize()
         {
             telas = new Telas();
-            timeRect = new Rectangle(700, 20, 25, 500);
+            timeRect = new Rectangle(700, 40, 25, 100);
 
             base.Initialize();
         }
@@ -49,9 +54,10 @@ namespace XNA_TrabM2
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            verdana = Content.Load<SpriteFont>(@"Fonts\Verdana");
             tileBlock = Content.Load<Texture2D>(@"Tiles\Block");
             playerSprite = Content.Load<Texture2D>(@"Sprites\Character");
-            barraTempo = Content.Load<Texture2D>(@"Sprites\TimeBar");
+            timeBar = Content.Load<Texture2D>(@"Sprites\TimeBar");
             
             tileMap = new List<Tile>();
 
@@ -97,6 +103,7 @@ namespace XNA_TrabM2
             {
                 if (startGame)
                 {
+                    timePassed += gameTime.ElapsedGameTime.Milliseconds;
                     #region Player Inputs
                     if (Input.KeyboardLeftJustPressed)
                     {
@@ -116,8 +123,16 @@ namespace XNA_TrabM2
                     }
                     #endregion
 
-                    if (timeRect.Height > 0)
-                        timeRect.Height -= 1;
+                    if (timePassed >= totalTime)
+                    {
+                        timePassed = 0;
+                        totalSecondsLeft--;
+                        
+                        if (timeRect.Height > 0)
+                            timeRect.Height -= 10;
+                        else
+                            gameOver = true;
+                    }
                 }
             }
 
@@ -135,6 +150,8 @@ namespace XNA_TrabM2
 
                 if (startGame && !gameOver)
                 {
+                    spriteBatch.DrawString(verdana, "Time: "+totalSecondsLeft+"s", new Vector2(680, 5), Color.Red);
+                    
                     player.Draw(spriteBatch);
 
                     foreach (Tile t in tileMap)
@@ -142,7 +159,7 @@ namespace XNA_TrabM2
                         t.Draw(spriteBatch);
                     }
 
-                    spriteBatch.Draw(barraTempo, timeRect, Color.White);
+                    spriteBatch.Draw(timeBar, timeRect, Color.White);
                 }
             }
             spriteBatch.End();
