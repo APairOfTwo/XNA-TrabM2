@@ -28,6 +28,8 @@ namespace XNA_TrabM2
         static List<Booster> timeBoosters;
         char[][] map;
 
+        FinalBlock finalBlock;
+
         Rectangle timeRect;
 
         Telas telas;
@@ -96,6 +98,10 @@ namespace XNA_TrabM2
                     if (map[i][j] == '2')
                     {
                         timeBoosters.Add(new Booster(boosterSprite, new Vector2(j, i)));
+                    }
+                    if (map[i][j] == 'F')
+                    {
+                        finalBlock = new FinalBlock(playerSprite, new Vector2(j, i));
                     }
                 }
             }
@@ -181,6 +187,11 @@ namespace XNA_TrabM2
                 }
             }
 
+            if (player.blockPosition == finalBlock.blockPosition)
+            {
+                gameOver = true;
+            }
+
             if (!gameOver)
             {
                 if (startGame)
@@ -239,6 +250,7 @@ namespace XNA_TrabM2
                     }
 
                     spriteBatch.Draw(timeBar, timeRect, Color.White);
+                    finalBlock.Draw(spriteBatch);
                 }
             }
             spriteBatch.End();
