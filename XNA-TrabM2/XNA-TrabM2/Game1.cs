@@ -42,6 +42,8 @@ namespace XNA_TrabM2
 
         SoundEffect menuMusic;
         SoundEffectInstance menuMusicInstance;
+        SoundEffect gameMusic;
+        SoundEffectInstance gameMusicInstance;
 
         public Game1()
         {
@@ -62,6 +64,9 @@ namespace XNA_TrabM2
         {
             menuMusic = Content.Load<SoundEffect>(@"Audio\MenuMusic");
             menuMusicInstance = menuMusic.CreateInstance();
+            gameMusic = Content.Load<SoundEffect>(@"Audio\GameMusic");
+            gameMusicInstance = gameMusic.CreateInstance();
+
             spriteBatch = new SpriteBatch(GraphicsDevice);
             verdana = Content.Load<SpriteFont>(@"Fonts\Verdana");
             tileBlock = Content.Load<Texture2D>(@"Tiles\Block");
@@ -126,6 +131,7 @@ namespace XNA_TrabM2
                 telas.TelaAtual = Telas.Tipo.Inicial;
                 startGame = false;
                 playMenuMusic();
+                gameMusicInstance.Pause();
             }
 
             if (startGame)
@@ -180,16 +186,20 @@ namespace XNA_TrabM2
                 if (startGame)
                 {
                     timePassed += gameTime.ElapsedGameTime.Milliseconds;
+                    gameMusicInstance.Pitch = -1 * ((float)totalSecondsLeft / 10) + 1;
 
                     if (timePassed >= totalTime)
                     {
                         timePassed = 0;
                         totalSecondsLeft--;
-                        
+
                         if (timeRect.Height > 0)
                             timeRect.Height -= 10;
                         else
+                        {
                             gameOver = true;
+                            gameMusicInstance.Stop();
+                        }
                     }
                 }
             }
@@ -234,6 +244,7 @@ namespace XNA_TrabM2
             spriteBatch.End();
         }
 
+        #region Play Audio
         public void playMenuMusic()
         {
             if (menuMusicInstance.State == SoundState.Stopped)
@@ -246,12 +257,26 @@ namespace XNA_TrabM2
                 menuMusicInstance.Resume();
         }
 
+        public void playGameMusic()
+        {
+            if (gameMusicInstance.State == SoundState.Stopped)
+            {
+                gameMusicInstance.Volume = 0.75f;
+                gameMusicInstance.IsLooped = true;
+                gameMusicInstance.Play();
+            }
+            else
+                gameMusicInstance.Resume();
+        }
+        #endregion
+
         #region Eventos dos Botões
         public void BotaoAzul_Click(object sender, EventArgs e)
         {
+            menuMusicInstance.Pause();
             telas.TelaAtual = Telas.Tipo.Jogo;
             startGame = true;
-            menuMusicInstance.Pause();
+            playGameMusic();
         }
 
         public void BotaoLaranja_Click(object sender, EventArgs e)
