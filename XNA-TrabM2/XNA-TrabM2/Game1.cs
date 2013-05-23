@@ -38,6 +38,9 @@ namespace XNA_TrabM2
         bool startGame = false;
         bool gameOver = false;
 
+        SoundEffect menuMusic;
+        SoundEffectInstance menuMusicInstance;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -55,6 +58,8 @@ namespace XNA_TrabM2
 
         protected override void LoadContent()
         {
+            menuMusic = Content.Load<SoundEffect>(@"Audio\MenuMusic");
+            menuMusicInstance = menuMusic.CreateInstance();
             spriteBatch = new SpriteBatch(GraphicsDevice);
             verdana = Content.Load<SpriteFont>(@"Fonts\Verdana");
             tileBlock = Content.Load<Texture2D>(@"Tiles\Block");
@@ -98,6 +103,8 @@ namespace XNA_TrabM2
             telas.Add(Content.Load<Texture2D>(@"telas\Tela_Vitoria"));
             telas.Add(Content.Load<Texture2D>(@"telas\Tela_GameOver"));
             telas.TelaAtual = Telas.Tipo.Inicial;
+
+            playMenuMusic();
         }
 
         protected override void UnloadContent() { }
@@ -110,6 +117,7 @@ namespace XNA_TrabM2
             {
                 telas.TelaAtual = Telas.Tipo.Inicial;
                 startGame = false;
+                playMenuMusic();
             }
 
             if (startGame)
@@ -204,11 +212,24 @@ namespace XNA_TrabM2
             spriteBatch.End();
         }
 
+        public void playMenuMusic()
+        {
+            if (menuMusicInstance.State == SoundState.Stopped)
+            {
+                menuMusicInstance.Volume = 0.75f;
+                menuMusicInstance.IsLooped = true;
+                menuMusicInstance.Play();
+            }
+            else
+                menuMusicInstance.Resume();
+        }
+
         #region Eventos dos Botões
         public void BotaoAzul_Click(object sender, EventArgs e)
         {
             telas.TelaAtual = Telas.Tipo.Jogo;
             startGame = true;
+            menuMusicInstance.Pause();
         }
 
         public void BotaoLaranja_Click(object sender, EventArgs e)
