@@ -23,7 +23,7 @@ namespace XNA_TrabM2
         Texture2D timeBar;
 
         Player player;
-        List<Tile> tileMap;
+        static List<Tile> tileMap;
         char[][] map;
 
         Rectangle timeRect;
@@ -135,10 +135,19 @@ namespace XNA_TrabM2
 
         protected override void Update(GameTime gameTime)
         {
-            GetInputs(gameTime);
-
             botoes.Update();
+
+            player.oldBlockPosition = player.blockPosition;
+            GetInputs(gameTime);
             player.Update();
+
+            foreach(Tile t in tileMap)
+            {
+                if (player.blockPosition == t.blockPosition)
+                {
+                    player.blockPosition = player.oldBlockPosition;
+                }
+            }
 
             if (!gameOver)
             {

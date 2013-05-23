@@ -12,6 +12,7 @@ namespace XNA_TrabM2
         public Texture2D texture;
         public Vector2 position;
         public Vector2 blockPosition;
+        public Vector2 oldBlockPosition;
         public Vector2 size;
 
         public Player(Texture2D texture, Vector2 blockPosition)
