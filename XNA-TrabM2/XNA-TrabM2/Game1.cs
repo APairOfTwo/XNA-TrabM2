@@ -18,11 +18,16 @@ namespace XNA_TrabM2
         SpriteBatch spriteBatch;
 
         Texture2D tileBlock;
+        Texture2D playerSprite;
+        Texture2D barraTempo;
+
+        Player player;
         List<Tile> tileMap;
         char[][] map;
 
-        Texture2D barraTempo;
         Rectangle timeRect;
+
+        public static bool right, left, up, down;
 
         public Game1()
         {
@@ -41,7 +46,8 @@ namespace XNA_TrabM2
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
             tileBlock = Content.Load<Texture2D>(@"Tiles\Block");
-            barraTempo = Content.Load<Texture2D>(@"Sprites\barraTempo");
+            playerSprite = Content.Load<Texture2D>(@"Sprites\Character");
+            barraTempo = Content.Load<Texture2D>(@"Sprites\TimeBar");
             
             tileMap = new List<Tile>();
 
@@ -57,18 +63,60 @@ namespace XNA_TrabM2
                     {
                         tileMap.Add(new Tile(tileBlock, new Vector2(j, i), TileCollision.Impassable));
                     }
+                    if (map[i][j] == 'I')
+                    {
+                        player = new Player(playerSprite, new Vector2(j, i));
+                    }
                 }
             }
         }
 
         protected override void UnloadContent() { }
 
+        private void GetInput()
+        {
+            KeyboardState keyboardState = Keyboard.GetState();
+
+            if (keyboardState.IsKeyDown(Keys.Left) || keyboardState.IsKeyDown(Keys.A))
+            {
+                left = true;
+            }
+            if (keyboardState.IsKeyDown(Keys.Right) || keyboardState.IsKeyDown(Keys.D))
+            {
+                right = true;
+            }
+            if (keyboardState.IsKeyDown(Keys.Up) || keyboardState.IsKeyDown(Keys.W))
+            {
+                up = true;
+            }
+            if (keyboardState.IsKeyDown(Keys.Down) || keyboardState.IsKeyDown(Keys.S))
+            {
+                down = true;
+            }
+            if (keyboardState.IsKeyUp(Keys.Left) && keyboardState.IsKeyUp(Keys.A))
+            {
+                left = false;
+            }
+            if (keyboardState.IsKeyUp(Keys.Right) && keyboardState.IsKeyUp(Keys.D))
+            {
+                right = false;
+            }
+            if (keyboardState.IsKeyUp(Keys.Up) && keyboardState.IsKeyUp(Keys.W))
+            {
+                up = false;
+            }
+            if (keyboardState.IsKeyUp(Keys.Down) && keyboardState.IsKeyUp(Keys.S))
+            {
+                down = false;
+            }
+        }
+
+
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
-                this.Exit();
+            GetInput();
+            player.Update();
 
-            
             if(timeRect.Height > 0)
                 timeRect.Height -= 1;
 
@@ -82,6 +130,8 @@ namespace XNA_TrabM2
             
             spriteBatch.Begin();
             {
+                player.Draw(spriteBatch);
+
                 foreach (Tile t in tileMap)
                 {
                     t.Draw(spriteBatch);
