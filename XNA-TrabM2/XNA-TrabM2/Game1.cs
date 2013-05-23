@@ -27,6 +27,10 @@ namespace XNA_TrabM2
         static List<Tile> tileMap;
         static List<Booster> timeBoosters;
         char[][] map;
+        char[][] map2;
+        char[][] map3;
+
+        int mapCont = 1;
 
         FinalBlock finalBlock;
 
@@ -80,31 +84,10 @@ namespace XNA_TrabM2
             timeBoosters = new List<Booster>();
 
             map = File.ReadAllLines(@"Content/TextFiles/mapa.txt").Select(l => l.Split(',').Select(i => char.Parse(i)).ToArray()).ToArray();
-            int rows = map.Length;
-            int cols = map.Max(subArray => subArray.Length);
+            map2 = File.ReadAllLines(@"Content/TextFiles/mapa2.txt").Select(l => l.Split(',').Select(i => char.Parse(i)).ToArray()).ToArray();
+            map3 = File.ReadAllLines(@"Content/TextFiles/mapa3.txt").Select(l => l.Split(',').Select(i => char.Parse(i)).ToArray()).ToArray();
 
-            for (int i = 0; i < rows; i++)
-            {
-                for (int j = 0; j < cols; j++)
-                {
-                    if (map[i][j] == 'P')
-                    {
-                        tileMap.Add(new Tile(tileBlock, new Vector2(j, i)));
-                    }
-                    if (map[i][j] == 'I')
-                    {
-                        player = new Player(playerSprite, new Vector2(j, i));
-                    }
-                    if (map[i][j] == '2')
-                    {
-                        timeBoosters.Add(new Booster(boosterSprite, new Vector2(j, i)));
-                    }
-                    if (map[i][j] == 'F')
-                    {
-                        finalBlock = new FinalBlock(playerSprite, new Vector2(j, i));
-                    }
-                }
-            }
+            loadMap(map);
 
             botoes.Add(new clsButton(this, Content.Load<Texture2D>(@"botoes\blackBall"),
                                      Content.Load<Texture2D>(@"botoes\blueBall"), new Vector2(380, 200),
@@ -187,11 +170,6 @@ namespace XNA_TrabM2
                 }
             }
 
-            if (player.blockPosition == finalBlock.blockPosition)
-            {
-                gameOver = true;
-            }
-
             if (!gameOver)
             {
                 if (startGame)
@@ -217,6 +195,27 @@ namespace XNA_TrabM2
             else
             {
                 telas.TelaAtual = Telas.Tipo.GameOver;
+            }
+
+            if (player.blockPosition == finalBlock.blockPosition)
+            {
+                clearStage();
+                if (mapCont == 1)
+                {
+                    loadMap(map2);
+                    mapCont = 2;
+                    return;
+                }
+                if (mapCont == 2)
+                {
+                    loadMap(map3);
+                    mapCont = 3;
+                    return;
+                }
+                if (mapCont == 3)
+                {
+                    gameOver = true;
+                }
             }
 
             base.Update(gameTime);
@@ -301,5 +300,45 @@ namespace XNA_TrabM2
             this.Exit();
         }
         #endregion
+
+        public void clearStage()
+        {
+            tileMap.Clear();
+            timeBoosters.Clear();
+            timePassed = 0;
+            totalSecondsLeft = 10;
+            timeRect.Height = 100;
+            gameMusicInstance.Pitch = 0;
+        }
+        
+        public void loadMap(char[][] map)
+        {
+            int rows = map.Length;
+            int cols = map.Max(subArray => subArray.Length);
+
+            for (int i = 0; i < rows; i++)
+            {
+                for (int j = 0; j < cols; j++)
+                {
+                    if (map[i][j] == 'P')
+                    {
+                        tileMap.Add(new Tile(tileBlock, new Vector2(j, i)));
+                    }
+                    if (map[i][j] == 'I')
+                    {
+                        player = new Player(playerSprite, new Vector2(j, i));
+                    }
+                    if (map[i][j] == '2')
+                    {
+                        timeBoosters.Add(new Booster(boosterSprite, new Vector2(j, i)));
+                    }
+                    if (map[i][j] == 'F')
+                    {
+                        finalBlock = new FinalBlock(playerSprite, new Vector2(j, i));
+                    }
+                }
+            }
+        }
     }
 }
+
