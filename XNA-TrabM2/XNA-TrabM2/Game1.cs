@@ -29,12 +29,13 @@ namespace XNA_TrabM2
         Rectangle timeRect;
 
         Telas telas;
+        Botoes botoes;
 
         long totalTime = 1000;
         long timePassed = 0;
         int totalSecondsLeft = 10;
 
-        bool startGame = true;
+        bool startGame = false;
         bool gameOver = false;
 
         public Game1()
@@ -47,6 +48,7 @@ namespace XNA_TrabM2
         {
             telas = new Telas();
             timeRect = new Rectangle(700, 40, 25, 100);
+            botoes = new Botoes();
 
             base.Initialize();
         }
@@ -80,23 +82,62 @@ namespace XNA_TrabM2
                 }
             }
 
+            botoes.Add(new clsButton(this, Content.Load<Texture2D>(@"botoes\blackBall"),
+                                     Content.Load<Texture2D>(@"botoes\blueBall"), new Vector2(380, 200),
+                                     new EventHandler(BotaoAzul_Click)));
+            botoes.Add(new clsButton(this, Content.Load<Texture2D>(@"botoes\blackBall"),
+                                     Content.Load<Texture2D>(@"botoes\orangeBall"), new Vector2(380, 280),
+                                     new EventHandler(BotaoLaranja_Click)));
+            botoes.Add(new clsButton(this, Content.Load<Texture2D>(@"botoes\blackBall"),
+                                     Content.Load<Texture2D>(@"botoes\redBall"), new Vector2(380, 360),
+                                     new EventHandler(BotaoVermelho_Click)));
+
             telas.Add(Content.Load<Texture2D>(@"telas\Tela_Inicial"));
-            telas.Add(Content.Load<Texture2D>(@"telas\Tela_Inicial"));
-            telas.Add(Content.Load<Texture2D>(@"telas\Tela_Inicial"));
-            telas.Add(Content.Load<Texture2D>(@"telas\Tela_Inicial"));
-            telas.Add(Content.Load<Texture2D>(@"telas\Tela_Inicial"));
-            //telas.Add(Content.Load<Texture2D>(@"telas\Tela_Instrucoes"));
-            //telas.Add(Content.Load<Texture2D>(@"telas\Tela_Jogo"));
-            //telas.Add(Content.Load<Texture2D>(@"telas\Tela_Vitoria"));
-            //telas.Add(Content.Load<Texture2D>(@"telas\Tela_GameOver"));
+            telas.Add(Content.Load<Texture2D>(@"telas\Tela_Instrucoes"));
+            telas.Add(Content.Load<Texture2D>(@"telas\Tela_Jogo"));
+            telas.Add(Content.Load<Texture2D>(@"telas\Tela_Vitoria"));
+            telas.Add(Content.Load<Texture2D>(@"telas\Tela_GameOver"));
             telas.TelaAtual = Telas.Tipo.Inicial;
         }
 
         protected override void UnloadContent() { }
 
-        protected override void Update(GameTime gameTime)
+        protected void GetInputs(GameTime gameTime)
         {
             Input.Update(gameTime);
+
+            if (Input.KeyboardEscapeJustPressed)
+            {
+                telas.TelaAtual = Telas.Tipo.Inicial;
+                startGame = false;
+            }
+
+            if (startGame)
+            {
+                if (Input.KeyboardLeftJustPressed)
+                {
+                    player.blockPosition.X -= 1;
+                }
+                if (Input.KeyboardRightJustPressed)
+                {
+                    player.blockPosition.X += 1;
+                }
+                if (Input.KeyboardUpJustPressed)
+                {
+                    player.blockPosition.Y -= 1;
+                }
+                if (Input.KeyboardDownJustPressed)
+                {
+                    player.blockPosition.Y += 1;
+                }
+            }
+        }
+
+        protected override void Update(GameTime gameTime)
+        {
+            GetInputs(gameTime);
+
+            botoes.Update();
             player.Update();
 
             if (!gameOver)
@@ -104,24 +145,6 @@ namespace XNA_TrabM2
                 if (startGame)
                 {
                     timePassed += gameTime.ElapsedGameTime.Milliseconds;
-                    #region Player Inputs
-                    if (Input.KeyboardLeftJustPressed)
-                    {
-                        player.blockPosition.X -= 1;
-                    }
-                    if (Input.KeyboardRightJustPressed)
-                    {
-                        player.blockPosition.X += 1;
-                    }
-                    if (Input.KeyboardUpJustPressed)
-                    {
-                        player.blockPosition.Y -= 1;
-                    }
-                    if (Input.KeyboardDownJustPressed)
-                    {
-                        player.blockPosition.Y += 1;
-                    }
-                    #endregion
 
                     if (timePassed >= totalTime)
                     {
@@ -135,6 +158,10 @@ namespace XNA_TrabM2
                     }
                 }
             }
+            else
+            {
+                telas.TelaAtual = Telas.Tipo.GameOver;
+            }
 
             base.Update(gameTime);
         }
@@ -147,6 +174,9 @@ namespace XNA_TrabM2
             spriteBatch.Begin();
             {
                 telas.Draw(spriteBatch);
+
+                if (telas.TelaAtual == Telas.Tipo.Inicial)
+                    botoes.Draw(spriteBatch);
 
                 if (startGame && !gameOver)
                 {
@@ -164,5 +194,23 @@ namespace XNA_TrabM2
             }
             spriteBatch.End();
         }
+
+        #region Eventos dos Botões
+        public void BotaoAzul_Click(object sender, EventArgs e)
+        {
+            telas.TelaAtual = Telas.Tipo.Jogo;
+            startGame = true;
+        }
+
+        public void BotaoLaranja_Click(object sender, EventArgs e)
+        {
+            telas.TelaAtual = Telas.Tipo.Instrucoes;
+        }
+
+        public void BotaoVermelho_Click(object sender, EventArgs e)
+        {
+            this.Exit();
+        }
+        #endregion
     }
 }
