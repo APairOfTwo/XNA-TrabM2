@@ -45,6 +45,7 @@ namespace XNA_TrabM2
 
         bool startGame = false;
         bool gameOver = false;
+        bool gameWin = false;
 
         SoundEffect menuMusic;
         SoundEffectInstance menuMusicInstance;
@@ -194,7 +195,13 @@ namespace XNA_TrabM2
             }
             else
             {
-                telas.TelaAtual = Telas.Tipo.GameOver;
+                if (gameWin)
+                {
+                    telas.TelaAtual = Telas.Tipo.Vitoria;
+                    gameMusicInstance.Stop();
+                }
+                else
+                    telas.TelaAtual = Telas.Tipo.GameOver;
             }
 
             if (player.blockPosition == finalBlock.blockPosition)
@@ -214,6 +221,7 @@ namespace XNA_TrabM2
                 }
                 if (mapCont == 3)
                 {
+                    gameWin = true;
                     gameOver = true;
                 }
             }
