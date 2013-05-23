@@ -19,6 +19,7 @@ namespace XNA_TrabM2
         SpriteFont verdana;
 
         Texture2D tileBlock;
+        Texture2D finalSprite;
         Texture2D playerSprite;
         Texture2D timeBar;
         Texture2D boosterSprite;
@@ -80,6 +81,7 @@ namespace XNA_TrabM2
             playerSprite = Content.Load<Texture2D>(@"Sprites\Character");
             timeBar = Content.Load<Texture2D>(@"Sprites\TimeBar");
             boosterSprite = Content.Load<Texture2D>(@"Sprites\Booster");
+            finalSprite = Content.Load<Texture2D>(@"Sprites\FinalBlock");
             
             tileMap = new List<Tile>();
             timeBoosters = new List<Booster>();
@@ -342,7 +344,7 @@ namespace XNA_TrabM2
                     }
                     if (map[i][j] == 'F')
                     {
-                        finalBlock = new FinalBlock(playerSprite, new Vector2(j, i));
+                        finalBlock = new FinalBlock(finalSprite, new Vector2(j, i));
                     }
                 }
             }
