@@ -21,9 +21,11 @@ namespace XNA_TrabM2
         Texture2D tileBlock;
         Texture2D playerSprite;
         Texture2D timeBar;
+        Texture2D boosterSprite;
 
         Player player;
         static List<Tile> tileMap;
+        static List<Booster> timeBoosters;
         char[][] map;
 
         Rectangle timeRect;
@@ -65,8 +67,10 @@ namespace XNA_TrabM2
             tileBlock = Content.Load<Texture2D>(@"Tiles\Block");
             playerSprite = Content.Load<Texture2D>(@"Sprites\Character");
             timeBar = Content.Load<Texture2D>(@"Sprites\TimeBar");
+            boosterSprite = Content.Load<Texture2D>(@"Sprites\Booster");
             
             tileMap = new List<Tile>();
+            timeBoosters = new List<Booster>();
 
             map = File.ReadAllLines(@"Content/TextFiles/mapa.txt").Select(l => l.Split(',').Select(i => char.Parse(i)).ToArray()).ToArray();
             int rows = map.Length;
@@ -78,11 +82,15 @@ namespace XNA_TrabM2
                 {
                     if (map[i][j] == 'P')
                     {
-                        tileMap.Add(new Tile(tileBlock, new Vector2(j, i), TileCollision.Impassable));
+                        tileMap.Add(new Tile(tileBlock, new Vector2(j, i)));
                     }
                     if (map[i][j] == 'I')
                     {
                         player = new Player(playerSprite, new Vector2(j, i));
+                    }
+                    if (map[i][j] == '2')
+                    {
+                        timeBoosters.Add(new Booster(boosterSprite, new Vector2(j, i)));
                     }
                 }
             }
@@ -157,6 +165,16 @@ namespace XNA_TrabM2
                 }
             }
 
+            foreach (Booster b in timeBoosters)
+            {
+                if (b.active && player.blockPosition == b.blockPosition)
+                {
+                    b.active = false;
+                    timeRect.Height += 30;
+                    totalSecondsLeft += 3;
+                }
+            }
+
             if (!gameOver)
             {
                 if (startGame)
@@ -204,6 +222,10 @@ namespace XNA_TrabM2
                     foreach (Tile t in tileMap)
                     {
                         t.Draw(spriteBatch);
+                    }
+                    foreach (Booster b in timeBoosters)
+                    {
+                        b.Draw(spriteBatch);
                     }
 
                     spriteBatch.Draw(timeBar, timeRect, Color.White);

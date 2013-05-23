@@ -107,6 +107,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Booster.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Apoio\clsButton.cs" />
     <Compile Include="Apoio\clsButtons.cs" />
