@@ -21,6 +21,9 @@ namespace XNA_TrabM2
         List<Tile> tileMap;
         char[][] map;
 
+        Texture2D barraTempo;
+        Rectangle timeRect;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -29,6 +32,8 @@ namespace XNA_TrabM2
 
         protected override void Initialize()
         {
+            timeRect = new Rectangle(700, 20, 25, 450);
+
             base.Initialize();
         }
 
@@ -36,6 +41,7 @@ namespace XNA_TrabM2
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
             tileBlock = Content.Load<Texture2D>(@"Tiles\Block");
+            barraTempo = Content.Load<Texture2D>(@"Sprites\barraTempo");
             
             tileMap = new List<Tile>();
 
@@ -61,6 +67,11 @@ namespace XNA_TrabM2
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
+
+            
+            if(timeRect.Height > 0)
+                timeRect.Height -= 1;
+
             base.Update(gameTime);
         }
 
@@ -75,6 +86,8 @@ namespace XNA_TrabM2
                 {
                     t.Draw(spriteBatch);
                 }
+
+                spriteBatch.Draw(barraTempo, timeRect, Color.White);
             }
             spriteBatch.End();
         }
