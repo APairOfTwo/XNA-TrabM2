@@ -29,6 +29,11 @@ namespace XNA_TrabM2
 
         public static bool right, left, up, down;
 
+        Telas telas;
+
+        bool startGame = true;
+        bool gameOver = false;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -37,7 +42,8 @@ namespace XNA_TrabM2
 
         protected override void Initialize()
         {
-            timeRect = new Rectangle(700, 20, 25, 450);
+            telas = new Telas();
+            timeRect = new Rectangle(700, 20, 25, 500);
 
             base.Initialize();
         }
@@ -69,6 +75,17 @@ namespace XNA_TrabM2
                     }
                 }
             }
+
+            telas.Add(Content.Load<Texture2D>(@"telas\Tela_Inicial"));
+            telas.Add(Content.Load<Texture2D>(@"telas\Tela_Inicial"));
+            telas.Add(Content.Load<Texture2D>(@"telas\Tela_Inicial"));
+            telas.Add(Content.Load<Texture2D>(@"telas\Tela_Inicial"));
+            telas.Add(Content.Load<Texture2D>(@"telas\Tela_Inicial"));
+            //telas.Add(Content.Load<Texture2D>(@"telas\Tela_Instrucoes"));
+            //telas.Add(Content.Load<Texture2D>(@"telas\Tela_Jogo"));
+            //telas.Add(Content.Load<Texture2D>(@"telas\Tela_Vitoria"));
+            //telas.Add(Content.Load<Texture2D>(@"telas\Tela_GameOver"));
+            telas.TelaAtual = Telas.Tipo.Inicial;
         }
 
         protected override void UnloadContent() { }
@@ -117,8 +134,14 @@ namespace XNA_TrabM2
             GetInput();
             player.Update();
 
-            if(timeRect.Height > 0)
-                timeRect.Height -= 1;
+            if (!gameOver)
+            {
+                if (startGame)
+                {
+                    if (timeRect.Height > 0)
+                        timeRect.Height -= 1;
+                }
+            }
 
             base.Update(gameTime);
         }
@@ -130,14 +153,19 @@ namespace XNA_TrabM2
             
             spriteBatch.Begin();
             {
-                player.Draw(spriteBatch);
+                telas.Draw(spriteBatch);
 
-                foreach (Tile t in tileMap)
+                if (startGame && !gameOver)
                 {
-                    t.Draw(spriteBatch);
-                }
+                    player.Draw(spriteBatch);
 
-                spriteBatch.Draw(barraTempo, timeRect, Color.White);
+                    foreach (Tile t in tileMap)
+                    {
+                        t.Draw(spriteBatch);
+                    }
+
+                    spriteBatch.Draw(barraTempo, timeRect, Color.White);
+                }
             }
             spriteBatch.End();
         }

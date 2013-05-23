@@ -108,6 +108,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Player.cs" />
+    <Compile Include="Apoio\clsButton.cs" />
+    <Compile Include="Apoio\clsButtons.cs" />
+    <Compile Include="Apoio\clsScreen.cs" />
+    <Compile Include="Apoio\clsScreens.cs" />
+    <Compile Include="Apoio\Input.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Game1.cs" />
