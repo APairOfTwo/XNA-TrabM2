@@ -57,6 +57,7 @@ namespace XNA_TrabM2
         SoundEffectInstance sfxGameWinInstance;
         SoundEffect sfxGameOver;
         SoundEffectInstance sfxGameOverInstance;
+        SoundEffect sfxPickup;
 
         public Game1()
         {
@@ -83,6 +84,7 @@ namespace XNA_TrabM2
             sfxGameWinInstance = sfxGameWin.CreateInstance();
             sfxGameOver = Content.Load<SoundEffect>(@"Audio\GameOver");
             sfxGameOverInstance = sfxGameOver.CreateInstance();
+            sfxPickup = Content.Load<SoundEffect>(@"Audio\Pickup");
 
             spriteBatch = new SpriteBatch(GraphicsDevice);
             verdana = Content.Load<SpriteFont>(@"Fonts\Verdana");
@@ -182,6 +184,7 @@ namespace XNA_TrabM2
             {
                 if (b.active && player.blockPosition == b.blockPosition)
                 {
+                    sfxPickup.Play();
                     b.active = false;
                     timeRect.Height += 30;
                     totalSecondsLeft += 3;
