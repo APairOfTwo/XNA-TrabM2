@@ -47,11 +47,16 @@ namespace XNA_TrabM2
         bool startGame = false;
         bool gameOver = false;
         bool gameWin = false;
+        bool playOnce = false;
 
         SoundEffect menuMusic;
         SoundEffectInstance menuMusicInstance;
         SoundEffect gameMusic;
         SoundEffectInstance gameMusicInstance;
+        SoundEffect sfxGameWin;
+        SoundEffectInstance sfxGameWinInstance;
+        SoundEffect sfxGameOver;
+        SoundEffectInstance sfxGameOverInstance;
 
         public Game1()
         {
@@ -74,6 +79,10 @@ namespace XNA_TrabM2
             menuMusicInstance = menuMusic.CreateInstance();
             gameMusic = Content.Load<SoundEffect>(@"Audio\GameMusic");
             gameMusicInstance = gameMusic.CreateInstance();
+            sfxGameWin = Content.Load<SoundEffect>(@"Audio\GameWin");
+            sfxGameWinInstance = sfxGameWin.CreateInstance();
+            sfxGameOver = Content.Load<SoundEffect>(@"Audio\GameOver");
+            sfxGameOverInstance = sfxGameOver.CreateInstance();
 
             spriteBatch = new SpriteBatch(GraphicsDevice);
             verdana = Content.Load<SpriteFont>(@"Fonts\Verdana");
@@ -122,7 +131,13 @@ namespace XNA_TrabM2
             {
                 telas.TelaAtual = Telas.Tipo.Inicial;
                 startGame = false;
+                gameOver = false;
+                gameWin = false;
+                playOnce = false;
+                clearStage();
+                mapCont = 1;
                 playMenuMusic();
+                loadMap(map);
                 gameMusicInstance.Pause();
             }
 
@@ -190,7 +205,7 @@ namespace XNA_TrabM2
                         else
                         {
                             gameOver = true;
-                            gameMusicInstance.Stop();
+                            gameMusicInstance.Pause();
                         }
                     }
                 }
@@ -199,16 +214,29 @@ namespace XNA_TrabM2
             {
                 if (gameWin)
                 {
-                    telas.TelaAtual = Telas.Tipo.Vitoria;
-                    gameMusicInstance.Stop();
+                    if (!playOnce)
+                    {
+                        playOnce = true;
+                        telas.TelaAtual = Telas.Tipo.Vitoria;
+                        gameMusicInstance.Pause();
+                        sfxGameWinInstance.Play();
+                    }
                 }
                 else
-                    telas.TelaAtual = Telas.Tipo.GameOver;
+                {
+                    if (!playOnce)
+                    {
+                        playOnce = true;
+                        telas.TelaAtual = Telas.Tipo.GameOver;
+                        sfxGameOverInstance.Play();
+                    }
+                }
             }
 
             if (player.blockPosition == finalBlock.blockPosition)
             {
                 clearStage();
+
                 if (mapCont == 1)
                 {
                     loadMap(map2);
@@ -288,6 +316,11 @@ namespace XNA_TrabM2
             }
             else
                 gameMusicInstance.Resume();
+        }
+
+        public void playSfx(SoundEffectInstance sfxInstance)
+        {
+
         }
         #endregion
 
