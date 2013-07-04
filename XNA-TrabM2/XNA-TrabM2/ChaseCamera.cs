@@ -108,7 +108,7 @@ namespace XNA_TrabM2
             get { return stiffness; }
             set { stiffness = value; }
         }
-        private float stiffness = 1800.0f;
+        private float stiffness = 2000.0f;
 
         /// <summary>
         /// Physics coefficient which approximates internal friction of the spring.

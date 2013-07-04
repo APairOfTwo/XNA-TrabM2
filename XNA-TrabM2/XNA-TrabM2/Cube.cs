@@ -13,6 +13,7 @@ namespace XNA_TrabM2
         public Model model;
         public Matrix world;
         public Vector3 position = Vector3.Zero;
+        float scale = 2;
 
         public Cube(Vector3 position)
         {
@@ -37,7 +38,7 @@ namespace XNA_TrabM2
             {
                 foreach (BasicEffect effect in mesh.Effects)
                 {
-                    effect.World = world;
+                    effect.World = world * Matrix.CreateScale(1, 2, 1);
                     effect.View = view;
                     effect.Projection = projection;
                     //effect.EnableDefaultLighting();
