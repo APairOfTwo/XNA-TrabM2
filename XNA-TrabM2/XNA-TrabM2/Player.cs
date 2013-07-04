@@ -15,7 +15,7 @@ namespace XNA_TrabM2
         public Matrix _world ;
         public Vector3 oldPosition = Vector3.Zero;
         private Vector3 _position = Vector3.Zero;
-        private Vector3 _direction = Vector3.Forward;
+        private Vector3 _direction = Vector3.Backward;
         private float _speed = 0;
 
         public Matrix world

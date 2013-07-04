@@ -14,7 +14,6 @@ namespace XNA_TrabM2
         public Model model;
         public Matrix world;
         public Vector3 position = Vector3.Zero;
-        float scale = 2;
 
         public Booster(Vector3 position)
         {

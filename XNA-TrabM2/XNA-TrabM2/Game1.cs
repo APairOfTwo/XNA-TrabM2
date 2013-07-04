@@ -151,7 +151,7 @@ namespace XNA_TrabM2
             telas.Add(Content.Load<Texture2D>(@"telas\Tela_GameOver"));
             telas.TelaAtual = Telas.Tipo.Inicial;
 
-            //playMenuMusic();
+            playMenuMusic();
         }
 
         protected override void UnloadContent()
@@ -176,35 +176,13 @@ namespace XNA_TrabM2
                 loadMap(map);
                 gameMusicInstance.Pause();
             }
-
-            //if (startGame)
-            //{
-            //    if (Input.KeyboardLeftJustPressed)
-            //    {
-            //        player.blockPosition.X -= 1;
-            //    }
-            //    if (Input.KeyboardRightJustPressed)
-            //    {
-            //        player.blockPosition.X += 1;
-            //    }
-            //    if (Input.KeyboardUpJustPressed)
-            //    {
-            //        player.blockPosition.Y -= 1;
-            //    }
-            //    if (Input.KeyboardDownJustPressed)
-            //    {
-            //        player.blockPosition.Y += 1;
-            //    }
-            //}
         }
 
         protected override void Update(GameTime gameTime)
         {
             botoes.Update();
 
-            //player.oldBlockPosition = player.blockPosition;
             GetInputs(gameTime);
-            //player.Update();
 
             if (!gameOver)
             {
@@ -331,6 +309,7 @@ namespace XNA_TrabM2
                 camera.DesiredPositionOffset = new Vector3(0.0f, camera.DesiredPositionOffset.Y - 0.5f, camera.DesiredPositionOffset.Z - 0.5f);
         }
 
+
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
@@ -347,6 +326,9 @@ namespace XNA_TrabM2
                 if (startGame && !gameOver)
                 {
                     spriteBatch.DrawString(verdana, "Time: "+totalSecondsLeft+"s", new Vector2(680, 5), Color.Red);
+
+                    GraphicsDevice.BlendState = BlendState.Opaque;
+                    GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
                     plano.Draw(camera.View, camera.Projection);
 
@@ -404,7 +386,7 @@ namespace XNA_TrabM2
             menuMusicInstance.Pause();
             telas.TelaAtual = Telas.Tipo.Jogo;
             startGame = true;
-            //playGameMusic();
+            playGameMusic();
         }
 
         public void BotaoLaranja_Click(object sender, EventArgs e)
@@ -448,7 +430,7 @@ namespace XNA_TrabM2
                     {
                         player.position = new Vector3(j, 0.5f, i);
                     }
-                    if (map[i][j] == '2')
+                    if (map[i][j] == 'T')
                     {
                         Booster b = new Booster(new Vector3(j, 0.5f, i));
                         b.LoadContent(Content);
