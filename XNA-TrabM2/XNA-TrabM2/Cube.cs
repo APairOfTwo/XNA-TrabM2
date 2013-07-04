@@ -40,7 +40,7 @@ namespace XNA_TrabM2
                     effect.World = world;
                     effect.View = view;
                     effect.Projection = projection;
-                    effect.EnableDefaultLighting();
+                    //effect.EnableDefaultLighting();
                 }
                 mesh.Draw();
             }

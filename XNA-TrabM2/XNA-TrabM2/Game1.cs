@@ -32,6 +32,7 @@ namespace XNA_TrabM2
         Boolean cameraSpringEnabled = true;
 
         static List<Tile> tileMap;
+        static List<Cube> cubeMap;
         static List<Booster> timeBoosters;
         char[][] map;
         char[][] map2;
@@ -46,7 +47,7 @@ namespace XNA_TrabM2
         Telas telas;
         Botoes botoes;
 
-        long totalTime = 1000;
+        long totalTime = 10000;
         long timePassed = 0;
         int totalSecondsLeft = 10;
 
@@ -94,8 +95,7 @@ namespace XNA_TrabM2
             camera.DesiredPositionOffset = new Vector3(0.0f, 7.0f, 7.0f);
             camera.LookAtOffset = new Vector3(0.0f, -1.0f, 0.0f);
             // Set the camera aspect ratio
-            camera.AspectRatio = (float)device.Viewport.Width /
-                                    device.Viewport.Height;
+            camera.AspectRatio = (float)device.Viewport.Width / device.Viewport.Height;
 
             // Perform an inital reset on the camera so that it starts at the resting
             // position. If we don't do this, the camera will start at the origin and
@@ -131,23 +131,18 @@ namespace XNA_TrabM2
             finalSprite = Content.Load<Texture2D>(@"Sprites\FinalBlock");
             
             tileMap = new List<Tile>();
+            cubeMap = new List<Cube>();
             timeBoosters = new List<Booster>();
 
             map = File.ReadAllLines(@"Content/TextFiles/mapa.txt").Select(l => l.Split(',').Select(i => char.Parse(i)).ToArray()).ToArray();
             map2 = File.ReadAllLines(@"Content/TextFiles/mapa2.txt").Select(l => l.Split(',').Select(i => char.Parse(i)).ToArray()).ToArray();
             map3 = File.ReadAllLines(@"Content/TextFiles/mapa3.txt").Select(l => l.Split(',').Select(i => char.Parse(i)).ToArray()).ToArray();
 
-            //loadMap(map);
+            loadMap(map);
 
-            botoes.Add(new clsButton(this, Content.Load<Texture2D>(@"botoes\blackBall"),
-                                     Content.Load<Texture2D>(@"botoes\blueBall"), new Vector2(380, 200),
-                                     new EventHandler(BotaoAzul_Click)));
-            botoes.Add(new clsButton(this, Content.Load<Texture2D>(@"botoes\blackBall"),
-                                     Content.Load<Texture2D>(@"botoes\orangeBall"), new Vector2(380, 280),
-                                     new EventHandler(BotaoLaranja_Click)));
-            botoes.Add(new clsButton(this, Content.Load<Texture2D>(@"botoes\blackBall"),
-                                     Content.Load<Texture2D>(@"botoes\redBall"), new Vector2(380, 360),
-                                     new EventHandler(BotaoVermelho_Click)));
+            botoes.Add(new clsButton(this, Content.Load<Texture2D>(@"botoes\blackBall"), Content.Load<Texture2D>(@"botoes\blueBall"), new Vector2(380, 200), new EventHandler(BotaoAzul_Click)));
+            botoes.Add(new clsButton(this, Content.Load<Texture2D>(@"botoes\blackBall"), Content.Load<Texture2D>(@"botoes\orangeBall"), new Vector2(380, 280), new EventHandler(BotaoLaranja_Click)));
+            botoes.Add(new clsButton(this, Content.Load<Texture2D>(@"botoes\blackBall"), Content.Load<Texture2D>(@"botoes\redBall"), new Vector2(380, 360), new EventHandler(BotaoVermelho_Click)));
 
             telas.Add(Content.Load<Texture2D>(@"telas\Tela_Inicial"));
             telas.Add(Content.Load<Texture2D>(@"telas\Tela_Instrucoes"));
@@ -237,6 +232,11 @@ namespace XNA_TrabM2
                     //  atualiza a posição do cubo
                     player.Update(gameTime);
                     cube.Update(gameTime);
+
+                    foreach (Cube c in cubeMap)
+                    {
+                        c.Update(gameTime);
+                    }
 
                     // Atualiza a câmera para "perseguir" seu alvo
                     UpdateCamera(gameTime, player.position, player.direction);
@@ -350,11 +350,16 @@ namespace XNA_TrabM2
                     spriteBatch.DrawString(verdana, "Time: "+totalSecondsLeft+"s", new Vector2(680, 5), Color.Red);
 
                     plano.Draw(camera.View, camera.Projection);
-                    
-                    //player.Draw(spriteBatch);
-                    player.Draw(camera.View, camera.Projection);
+
+                    foreach (Cube c in cubeMap)
+                    {
+                        c.Draw(camera.View, camera.Projection);
+                    }
 
                     cube.Draw(camera.View, camera.Projection);
+
+                    //player.Draw(spriteBatch);
+                    player.Draw(camera.View, camera.Projection);
 
                     //foreach (Tile t in tileMap)
                     //{
@@ -421,6 +426,7 @@ namespace XNA_TrabM2
         public void clearStage()
         {
             tileMap.Clear();
+            cubeMap.Clear();
             timeBoosters.Clear();
             timePassed = 0;
             totalSecondsLeft = 10;
@@ -439,7 +445,9 @@ namespace XNA_TrabM2
                 {
                     if (map[i][j] == 'P')
                     {
-                        tileMap.Add(new Tile(tileBlock, new Vector2(j, i)));
+                        Cube c = new Cube(new Vector3(j, 0.5f, i));
+                        c.LoadContent(Content);
+                        cubeMap.Add(c);
                     }
                     if (map[i][j] == 'I')
                     {
