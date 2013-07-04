@@ -75,7 +75,7 @@ namespace XNA_TrabM2
         protected override void Initialize()
         {
             player = new Player();
-            cube = new Cube(new Vector3(0, 0, -3));
+            cube = new Cube(new Vector3(0, .5f, -3));
             plano = new Plano(GraphicsDevice);
 
             // Cria a "chasing camera", que segue o cubo
@@ -238,6 +238,12 @@ namespace XNA_TrabM2
                         c.Update(gameTime);
                     }
 
+                    //  Se o cubo está se movendo e bateu na parede
+                    if (player.CheckForCollisions(cube) && player.speed != 0f)
+                    {
+                        player.position = player.oldPosition;
+                    }
+
                     // Atualiza a câmera para "perseguir" seu alvo
                     UpdateCamera(gameTime, player.position, player.direction);
 
@@ -360,7 +366,7 @@ namespace XNA_TrabM2
 
                     //player.Draw(spriteBatch);
                     player.Draw(camera.View, camera.Projection);
-
+                    
                     //foreach (Tile t in tileMap)
                     //{
                     //    t.Draw(spriteBatch);

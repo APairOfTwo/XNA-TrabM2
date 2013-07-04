@@ -10,9 +10,9 @@ namespace XNA_TrabM2
 {
     class Cube
     {
-        Model model;
+        public Model model;
         public Matrix world;
-        private Vector3 position = Vector3.Zero;
+        public Vector3 position = Vector3.Zero;
 
         public Cube(Vector3 position)
         {

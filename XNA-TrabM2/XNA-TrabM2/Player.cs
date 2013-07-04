@@ -13,6 +13,7 @@ namespace XNA_TrabM2
     {
         Model model;
         public Matrix _world ;
+        public Vector3 oldPosition = Vector3.Zero;
         private Vector3 _position = Vector3.Zero;
         private Vector3 _direction = Vector3.Forward;
         private float _speed = 0;
@@ -26,6 +27,7 @@ namespace XNA_TrabM2
         public Vector3 position
         {
             get { return _position; }
+            set { _position = value; }
         }
 
         public Vector3 direction
@@ -54,6 +56,7 @@ namespace XNA_TrabM2
             //  Posiciona o cubo acima do plano
             _world *= Matrix.CreateTranslation(position);
             _position = new Vector3(0f, .5f, 0f);
+            oldPosition = _position;
         }
 
         public void LoadContent(ContentManager content)
@@ -63,6 +66,8 @@ namespace XNA_TrabM2
 
         public void Update(GameTime time)
         {
+            oldPosition = _position;
+
             //---  Move o cubo
             KeyboardState currentKeyboardState = Keyboard.GetState();
             if (currentKeyboardState.IsKeyDown(Keys.Left))
@@ -107,6 +112,24 @@ namespace XNA_TrabM2
                 }
                 mesh.Draw();
             }
+        }
+
+        public bool CheckForCollisions(Cube modelo)
+        {
+            for (int i = 0; i < model.Meshes.Count; i++)
+            {
+                // Check whether the bounding boxes of the two cubes intersect.
+                BoundingSphere boundingSphere = model.Meshes[i].BoundingSphere;
+                boundingSphere.Center = _position;
+                for (int j = 0; j < modelo.model.Meshes.Count; j++)
+                {
+                    BoundingSphere otherBoundingSphere = modelo.model.Meshes[j].BoundingSphere;
+                    otherBoundingSphere.Center = modelo.position;
+                    if (boundingSphere.Intersects(otherBoundingSphere))
+                        return true;
+                }
+            }
+            return false;
         }
 
         // TODO Modo antigo 2D
