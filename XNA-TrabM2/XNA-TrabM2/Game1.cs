@@ -25,7 +25,7 @@ namespace XNA_TrabM2
         Texture2D boosterSprite;
 
         Player player;
-
+        Cube cube;
         Plano plano;
 
         ChaseCamera camera;
@@ -74,6 +74,7 @@ namespace XNA_TrabM2
         protected override void Initialize()
         {
             player = new Player();
+            cube = new Cube();
             plano = new Plano(GraphicsDevice);
 
             // Cria a "chasing camera", que segue o cubo
@@ -107,6 +108,8 @@ namespace XNA_TrabM2
         protected override void LoadContent()
         {
             player.LoadContent(Content);
+            cube.LoadContent(Content);
+
             plano.LoadContent(Content.Load<Texture2D>(@"Texturas\PlaneTexture"));
 
             menuMusic = Content.Load<SoundEffect>(@"Audio\MenuMusic");
@@ -349,6 +352,8 @@ namespace XNA_TrabM2
                     
                     //player.Draw(spriteBatch);
                     player.Draw(camera.View, camera.Projection);
+
+                    cube.Draw(camera.View, camera.Projection);
 
                     //foreach (Tile t in tileMap)
                     //{

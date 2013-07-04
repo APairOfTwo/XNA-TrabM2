@@ -109,6 +109,7 @@
   <ItemGroup>
     <Compile Include="Booster.cs" />
     <Compile Include="ChaseCamera.cs" />
+    <Compile Include="Cube.cs" />
     <Compile Include="FinalBlock.cs" />
     <Compile Include="Plano.cs" />
     <Compile Include="Player.cs" />
