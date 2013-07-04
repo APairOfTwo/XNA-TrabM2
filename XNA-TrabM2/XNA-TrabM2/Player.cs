@@ -133,6 +133,25 @@ namespace XNA_TrabM2
             return false;
         }
 
+        public bool CheckForCollisions(Booster modelo)
+        {
+            for (int i = 0; i < model.Meshes.Count; i++)
+            {
+                BoundingSphere boundingSphere;
+                boundingSphere.Radius = 0.5f;
+                boundingSphere.Center = _position;
+                for (int j = 0; j < modelo.model.Meshes.Count; j++)
+                {
+                    BoundingSphere otherBoundingSphere = modelo.model.Meshes[j].BoundingSphere;
+                    otherBoundingSphere.Radius = 0.5f;
+                    otherBoundingSphere.Center = modelo.position;
+                    if (boundingSphere.Intersects(otherBoundingSphere))
+                        return true;
+                }
+            }
+            return false;
+        }
+
         // TODO Modo antigo 2D
 
         //public Texture2D texture;

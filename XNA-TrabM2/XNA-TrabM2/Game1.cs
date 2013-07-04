@@ -47,7 +47,7 @@ namespace XNA_TrabM2
         Telas telas;
         Botoes botoes;
 
-        long totalTime = 10000;
+        long totalTime = 1000;
         long timePassed = 0;
         int totalSecondsLeft = 10;
 
@@ -206,25 +206,6 @@ namespace XNA_TrabM2
             GetInputs(gameTime);
             //player.Update();
 
-            //foreach(Tile t in tileMap)
-            //{
-            //    if (player.blockPosition == t.blockPosition)
-            //    {
-            //        player.blockPosition = player.oldBlockPosition;
-            //    }
-            //}
-
-            //foreach (Booster b in timeBoosters)
-            //{
-            //    if (b.active && player.blockPosition == b.blockPosition)
-            //    {
-            //        sfxPickup.Play();
-            //        b.active = false;
-            //        timeRect.Height += 30;
-            //        totalSecondsLeft += 3;
-            //    }
-            //}
-
             if (!gameOver)
             {
                 if (startGame)
@@ -241,6 +222,18 @@ namespace XNA_TrabM2
                         if (player.CheckForCollisions(c) && player.speed != 0f)
                         {
                             player.position = player.oldPosition;
+                        }
+                    }
+
+                    foreach (Booster b in timeBoosters)
+                    {
+                        b.Update(gameTime);
+                        if (b.active && player.CheckForCollisions(b))
+                        {
+                            sfxPickup.Play();
+                            b.active = false;
+                            timeRect.Height += 30;
+                            totalSecondsLeft += 3;
                         }
                     }
 
@@ -364,17 +357,13 @@ namespace XNA_TrabM2
 
                     cube.Draw(camera.View, camera.Projection);
 
-                    //player.Draw(spriteBatch);
-                    player.Draw(camera.View, camera.Projection);
+                    foreach (Booster b in timeBoosters)
+                    {
+                        if(b.active)
+                            b.Draw(camera.View, camera.Projection);
+                    }
                     
-                    //foreach (Tile t in tileMap)
-                    //{
-                    //    t.Draw(spriteBatch);
-                    //}
-                    //foreach (Booster b in timeBoosters)
-                    //{
-                    //    b.Draw(spriteBatch);
-                    //}
+                    player.Draw(camera.View, camera.Projection);
 
                     spriteBatch.Draw(timeBar, timeRect, Color.White);
                     //finalBlock.Draw(spriteBatch);
@@ -451,7 +440,7 @@ namespace XNA_TrabM2
                 {
                     if (map[i][j] == 'P')
                     {
-                        Cube c = new Cube(new Vector3(j * 2, 0.5f, i * 2));
+                        Cube c = new Cube(new Vector3(j, 0.5f, i));
                         c.LoadContent(Content);
                         cubeMap.Add(c);
                     }
@@ -461,7 +450,9 @@ namespace XNA_TrabM2
                     }
                     if (map[i][j] == '2')
                     {
-                        timeBoosters.Add(new Booster(boosterSprite, new Vector2(j, i)));
+                        Booster b = new Booster(new Vector3(j, 0.5f, i));
+                        b.LoadContent(Content);
+                        timeBoosters.Add(b);
                     }
                     if (map[i][j] == 'F')
                     {

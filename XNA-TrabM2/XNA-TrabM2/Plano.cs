@@ -62,7 +62,7 @@ namespace XNA_TrabM2
         private void CreatePlane()
         {
             //  size of 3D Axis 
-            float PlaneLenght = 10f;
+            float PlaneLenght = 100f;
             float repetition = 6f;
             //  Number of vertices we´ll use
             int vertexCount = 4;

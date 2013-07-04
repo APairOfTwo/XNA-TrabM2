@@ -52,6 +52,11 @@
       <Importer>XImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
+    <Compile Include="Modelos\Sphere.fbx">
+      <Name>Sphere</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
     <None Include="TextFiles\mapa.txt">
       <Name>mapa</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
