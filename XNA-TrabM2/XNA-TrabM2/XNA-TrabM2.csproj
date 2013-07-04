@@ -110,6 +110,7 @@
     <Compile Include="Booster.cs" />
     <Compile Include="ChaseCamera.cs" />
     <Compile Include="FinalBlock.cs" />
+    <Compile Include="Plano.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Apoio\clsButton.cs" />
     <Compile Include="Apoio\clsButtons.cs" />

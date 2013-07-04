@@ -66,10 +66,10 @@ namespace XNA_TrabM2
             //---  Move o cubo
             KeyboardState currentKeyboardState = Keyboard.GetState();
             if (currentKeyboardState.IsKeyDown(Keys.Left))
-                SetRotationY(-0.01f);
+                SetRotationY(0.01f);
 
             if (currentKeyboardState.IsKeyDown(Keys.Right))
-                SetRotationY(0.01f);
+                SetRotationY(-0.01f);
 
             if (currentKeyboardState.IsKeyDown(Keys.Space))
                 speed = 0.0f;

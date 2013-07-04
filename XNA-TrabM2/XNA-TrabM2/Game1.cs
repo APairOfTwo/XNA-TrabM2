@@ -26,6 +26,8 @@ namespace XNA_TrabM2
 
         Player player;
 
+        Plano plano;
+
         ChaseCamera camera;
         Boolean cameraSpringEnabled = true;
 
@@ -72,6 +74,7 @@ namespace XNA_TrabM2
         protected override void Initialize()
         {
             player = new Player();
+            plano = new Plano(GraphicsDevice);
 
             // Cria a "chasing camera", que segue o cubo
             InicializaCamera(graphics.GraphicsDevice);
@@ -104,6 +107,7 @@ namespace XNA_TrabM2
         protected override void LoadContent()
         {
             player.LoadContent(Content);
+            plano.LoadContent(Content.Load<Texture2D>(@"Texturas\PlaneTexture"));
 
             menuMusic = Content.Load<SoundEffect>(@"Audio\MenuMusic");
             menuMusicInstance = menuMusic.CreateInstance();
@@ -152,7 +156,10 @@ namespace XNA_TrabM2
             playMenuMusic();
         }
 
-        protected override void UnloadContent() { }
+        protected override void UnloadContent()
+        {
+            plano.UnloadContent();
+        }
 
         protected void GetInputs(GameTime gameTime)
         {
@@ -337,6 +344,8 @@ namespace XNA_TrabM2
                 if (startGame && !gameOver)
                 {
                     spriteBatch.DrawString(verdana, "Time: "+totalSecondsLeft+"s", new Vector2(680, 5), Color.Red);
+
+                    plano.Draw(camera.View, camera.Projection);
                     
                     //player.Draw(spriteBatch);
                     player.Draw(camera.View, camera.Projection);
