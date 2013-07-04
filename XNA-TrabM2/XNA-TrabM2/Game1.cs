@@ -25,6 +25,10 @@ namespace XNA_TrabM2
         Texture2D boosterSprite;
 
         Player player;
+
+        ChaseCamera camera;
+        Boolean cameraSpringEnabled = true;
+
         static List<Tile> tileMap;
         static List<Booster> timeBoosters;
         char[][] map;
@@ -67,6 +71,11 @@ namespace XNA_TrabM2
 
         protected override void Initialize()
         {
+            player = new Player();
+
+            // Cria a "chasing camera", que segue o cubo
+            InicializaCamera(graphics.GraphicsDevice);
+
             telas = new Telas();
             timeRect = new Rectangle(700, 40, 25, 100);
             botoes = new Botoes();
@@ -74,8 +83,28 @@ namespace XNA_TrabM2
             base.Initialize();
         }
 
+        public void InicializaCamera(GraphicsDevice device)
+        {
+            camera = new ChaseCamera();
+            // Set the camera offsets
+            camera.DesiredPositionOffset = new Vector3(0.0f, 7.0f, 7.0f);
+            camera.LookAtOffset = new Vector3(0.0f, -1.0f, 0.0f);
+            // Set the camera aspect ratio
+            camera.AspectRatio = (float)device.Viewport.Width /
+                                    device.Viewport.Height;
+
+            // Perform an inital reset on the camera so that it starts at the resting
+            // position. If we don't do this, the camera will start at the origin and
+            // race across the world to get behind the chased object.
+            // This is performed here because the aspect ratio is needed by Reset.
+            UpdateCamera(new GameTime(), player.position, player.direction);
+            camera.Reset();
+        }
+
         protected override void LoadContent()
         {
+            player.LoadContent(Content);
+
             menuMusic = Content.Load<SoundEffect>(@"Audio\MenuMusic");
             menuMusicInstance = menuMusic.CreateInstance();
             gameMusic = Content.Load<SoundEffect>(@"Audio\GameMusic");
@@ -89,7 +118,7 @@ namespace XNA_TrabM2
             spriteBatch = new SpriteBatch(GraphicsDevice);
             verdana = Content.Load<SpriteFont>(@"Fonts\Verdana");
             tileBlock = Content.Load<Texture2D>(@"Tiles\Block");
-            playerSprite = Content.Load<Texture2D>(@"Sprites\Character");
+            //playerSprite = Content.Load<Texture2D>(@"Sprites\Character");
             timeBar = Content.Load<Texture2D>(@"Sprites\TimeBar");
             boosterSprite = Content.Load<Texture2D>(@"Sprites\Booster");
             finalSprite = Content.Load<Texture2D>(@"Sprites\FinalBlock");
@@ -101,7 +130,7 @@ namespace XNA_TrabM2
             map2 = File.ReadAllLines(@"Content/TextFiles/mapa2.txt").Select(l => l.Split(',').Select(i => char.Parse(i)).ToArray()).ToArray();
             map3 = File.ReadAllLines(@"Content/TextFiles/mapa3.txt").Select(l => l.Split(',').Select(i => char.Parse(i)).ToArray()).ToArray();
 
-            loadMap(map);
+            //loadMap(map);
 
             botoes.Add(new clsButton(this, Content.Load<Texture2D>(@"botoes\blackBall"),
                                      Content.Load<Texture2D>(@"botoes\blueBall"), new Vector2(380, 200),
@@ -143,58 +172,64 @@ namespace XNA_TrabM2
                 gameMusicInstance.Pause();
             }
 
-            if (startGame)
-            {
-                if (Input.KeyboardLeftJustPressed)
-                {
-                    player.blockPosition.X -= 1;
-                }
-                if (Input.KeyboardRightJustPressed)
-                {
-                    player.blockPosition.X += 1;
-                }
-                if (Input.KeyboardUpJustPressed)
-                {
-                    player.blockPosition.Y -= 1;
-                }
-                if (Input.KeyboardDownJustPressed)
-                {
-                    player.blockPosition.Y += 1;
-                }
-            }
+            //if (startGame)
+            //{
+            //    if (Input.KeyboardLeftJustPressed)
+            //    {
+            //        player.blockPosition.X -= 1;
+            //    }
+            //    if (Input.KeyboardRightJustPressed)
+            //    {
+            //        player.blockPosition.X += 1;
+            //    }
+            //    if (Input.KeyboardUpJustPressed)
+            //    {
+            //        player.blockPosition.Y -= 1;
+            //    }
+            //    if (Input.KeyboardDownJustPressed)
+            //    {
+            //        player.blockPosition.Y += 1;
+            //    }
+            //}
         }
 
         protected override void Update(GameTime gameTime)
         {
             botoes.Update();
 
-            player.oldBlockPosition = player.blockPosition;
+            //player.oldBlockPosition = player.blockPosition;
             GetInputs(gameTime);
-            player.Update();
+            //player.Update();
 
-            foreach(Tile t in tileMap)
-            {
-                if (player.blockPosition == t.blockPosition)
-                {
-                    player.blockPosition = player.oldBlockPosition;
-                }
-            }
+            //foreach(Tile t in tileMap)
+            //{
+            //    if (player.blockPosition == t.blockPosition)
+            //    {
+            //        player.blockPosition = player.oldBlockPosition;
+            //    }
+            //}
 
-            foreach (Booster b in timeBoosters)
-            {
-                if (b.active && player.blockPosition == b.blockPosition)
-                {
-                    sfxPickup.Play();
-                    b.active = false;
-                    timeRect.Height += 30;
-                    totalSecondsLeft += 3;
-                }
-            }
+            //foreach (Booster b in timeBoosters)
+            //{
+            //    if (b.active && player.blockPosition == b.blockPosition)
+            //    {
+            //        sfxPickup.Play();
+            //        b.active = false;
+            //        timeRect.Height += 30;
+            //        totalSecondsLeft += 3;
+            //    }
+            //}
 
             if (!gameOver)
             {
                 if (startGame)
                 {
+                    //  atualiza a posição do cubo
+                    player.Update(gameTime);
+
+                    // Atualiza a câmera para "perseguir" seu alvo
+                    UpdateCamera(gameTime, player.position, player.direction);
+
                     timePassed += gameTime.ElapsedGameTime.Milliseconds;
                     gameMusicInstance.Pitch = -1 * ((float)totalSecondsLeft / 10) + 1;
 
@@ -236,30 +271,54 @@ namespace XNA_TrabM2
                 }
             }
 
-            if (player.blockPosition == finalBlock.blockPosition)
-            {
-                clearStage();
+            //if (player.blockPosition == finalBlock.blockPosition)
+            //{
+            //    clearStage();
 
-                if (mapCont == 1)
-                {
-                    loadMap(map2);
-                    mapCont = 2;
-                    return;
-                }
-                if (mapCont == 2)
-                {
-                    loadMap(map3);
-                    mapCont = 3;
-                    return;
-                }
-                if (mapCont == 3)
-                {
-                    gameWin = true;
-                    gameOver = true;
-                }
-            }
+            //    if (mapCont == 1)
+            //    {
+            //        loadMap(map2);
+            //        mapCont = 2;
+            //        return;
+            //    }
+            //    if (mapCont == 2)
+            //    {
+            //        loadMap(map3);
+            //        mapCont = 3;
+            //        return;
+            //    }
+            //    if (mapCont == 3)
+            //    {
+            //        gameWin = true;
+            //        gameOver = true;
+            //    }
+            //}
 
             base.Update(gameTime);
+        }
+
+        private void UpdateCamera(GameTime gameTime, Vector3 posicao, Vector3 direcao)
+        {
+            // The chase camera's update behavior is the springs, but we can
+            // use the Reset method to have a locked, spring-less camera
+            if (cameraSpringEnabled)
+                camera.Update(gameTime);
+            else
+                camera.Reset();
+
+            //  Update the chase target
+            camera.ChasePosition = posicao;
+            camera.ChaseDirection = direcao;
+
+            KeyboardState keyboard = Keyboard.GetState();
+            if (keyboard.IsKeyDown(Keys.S))
+                cameraSpringEnabled = !cameraSpringEnabled;
+
+            if (keyboard.IsKeyDown(Keys.PageUp))
+                camera.DesiredPositionOffset = new Vector3(0.0f, camera.DesiredPositionOffset.Y + 0.5f, camera.DesiredPositionOffset.Z + 0.5f);
+
+            if (keyboard.IsKeyDown(Keys.PageDown))
+                camera.DesiredPositionOffset = new Vector3(0.0f, camera.DesiredPositionOffset.Y - 0.5f, camera.DesiredPositionOffset.Z - 0.5f);
         }
 
         protected override void Draw(GameTime gameTime)
@@ -269,7 +328,8 @@ namespace XNA_TrabM2
             
             spriteBatch.Begin();
             {
-                telas.Draw(spriteBatch);
+                if (!startGame || gameOver)
+                    telas.Draw(spriteBatch);
 
                 if (telas.TelaAtual == Telas.Tipo.Inicial)
                     botoes.Draw(spriteBatch);
@@ -278,19 +338,20 @@ namespace XNA_TrabM2
                 {
                     spriteBatch.DrawString(verdana, "Time: "+totalSecondsLeft+"s", new Vector2(680, 5), Color.Red);
                     
-                    player.Draw(spriteBatch);
+                    //player.Draw(spriteBatch);
+                    player.Draw(camera.View, camera.Projection);
 
-                    foreach (Tile t in tileMap)
-                    {
-                        t.Draw(spriteBatch);
-                    }
-                    foreach (Booster b in timeBoosters)
-                    {
-                        b.Draw(spriteBatch);
-                    }
+                    //foreach (Tile t in tileMap)
+                    //{
+                    //    t.Draw(spriteBatch);
+                    //}
+                    //foreach (Booster b in timeBoosters)
+                    //{
+                    //    b.Draw(spriteBatch);
+                    //}
 
                     spriteBatch.Draw(timeBar, timeRect, Color.White);
-                    finalBlock.Draw(spriteBatch);
+                    //finalBlock.Draw(spriteBatch);
                 }
             }
             spriteBatch.End();
@@ -319,11 +380,6 @@ namespace XNA_TrabM2
             }
             else
                 gameMusicInstance.Resume();
-        }
-
-        public void playSfx(SoundEffectInstance sfxInstance)
-        {
-
         }
         #endregion
 
@@ -372,7 +428,7 @@ namespace XNA_TrabM2
                     }
                     if (map[i][j] == 'I')
                     {
-                        player = new Player(playerSprite, new Vector2(j, i));
+                        //player = new Player(playerSprite, new Vector2(j, i));
                     }
                     if (map[i][j] == '2')
                     {
