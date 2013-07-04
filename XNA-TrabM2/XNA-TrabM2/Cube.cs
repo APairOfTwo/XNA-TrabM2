@@ -14,16 +14,21 @@ namespace XNA_TrabM2
         public Matrix world;
         private Vector3 position = Vector3.Zero;
 
-        public Cube()
+        public Cube(Vector3 position)
         {
-            //  Posiciona o cubo acima do plano
+            this.position = position;
             world *= Matrix.CreateTranslation(position);
-            position = new Vector3(0f, .5f, 0f);
         }
 
         public void LoadContent(ContentManager content)
         {
             model = content.Load<Model>(@"Modelos\Cube");
+        }
+
+        public void Update(GameTime time)
+        {
+            world = Matrix.Identity;
+            world.Translation = position;
         }
 
         public void Draw(Matrix view, Matrix projection)

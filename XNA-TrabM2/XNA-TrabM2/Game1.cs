@@ -74,7 +74,7 @@ namespace XNA_TrabM2
         protected override void Initialize()
         {
             player = new Player();
-            cube = new Cube();
+            cube = new Cube(new Vector3(0, 0, -3));
             plano = new Plano(GraphicsDevice);
 
             // Cria a "chasing camera", que segue o cubo
@@ -156,7 +156,7 @@ namespace XNA_TrabM2
             telas.Add(Content.Load<Texture2D>(@"telas\Tela_GameOver"));
             telas.TelaAtual = Telas.Tipo.Inicial;
 
-            playMenuMusic();
+            //playMenuMusic();
         }
 
         protected override void UnloadContent()
@@ -236,6 +236,7 @@ namespace XNA_TrabM2
                 {
                     //  atualiza a posição do cubo
                     player.Update(gameTime);
+                    cube.Update(gameTime);
 
                     // Atualiza a câmera para "perseguir" seu alvo
                     UpdateCamera(gameTime, player.position, player.direction);
@@ -403,7 +404,7 @@ namespace XNA_TrabM2
             menuMusicInstance.Pause();
             telas.TelaAtual = Telas.Tipo.Jogo;
             startGame = true;
-            playGameMusic();
+            //playGameMusic();
         }
 
         public void BotaoLaranja_Click(object sender, EventArgs e)
