@@ -92,8 +92,8 @@ namespace XNA_TrabM2
         {
             camera = new ChaseCamera();
             // Set the camera offsets
-            camera.DesiredPositionOffset = new Vector3(0.0f, 7.0f, 7.0f);
-            camera.LookAtOffset = new Vector3(0.0f, -1.0f, 0.0f);
+            camera.DesiredPositionOffset = new Vector3(0.0f, 2.0f, 5.0f);
+            camera.LookAtOffset = new Vector3(0.0f, 1.0f, 0.0f);
             // Set the camera aspect ratio
             camera.AspectRatio = (float)device.Viewport.Width / device.Viewport.Height;
 
@@ -236,12 +236,12 @@ namespace XNA_TrabM2
                     foreach (Cube c in cubeMap)
                     {
                         c.Update(gameTime);
-                    }
 
-                    //  Se o cubo está se movendo e bateu na parede
-                    if (player.CheckForCollisions(cube) && player.speed != 0f)
-                    {
-                        player.position = player.oldPosition;
+                        //  Se o cubo está se movendo e bateu na parede
+                        if (player.CheckForCollisions(c) && player.speed != 0f)
+                        {
+                            player.position = player.oldPosition;
+                        }
                     }
 
                     // Atualiza a câmera para "perseguir" seu alvo
@@ -451,13 +451,13 @@ namespace XNA_TrabM2
                 {
                     if (map[i][j] == 'P')
                     {
-                        Cube c = new Cube(new Vector3(j, 0.5f, i));
+                        Cube c = new Cube(new Vector3(j*2, 0.5f, i*2));
                         c.LoadContent(Content);
                         cubeMap.Add(c);
                     }
                     if (map[i][j] == 'I')
                     {
-                        //player = new Player(playerSprite, new Vector2(j, i));
+                        player.position = new Vector3(j, 0.5f, i);
                     }
                     if (map[i][j] == '2')
                     {

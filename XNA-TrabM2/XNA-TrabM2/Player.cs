@@ -71,13 +71,10 @@ namespace XNA_TrabM2
             //---  Move o cubo
             KeyboardState currentKeyboardState = Keyboard.GetState();
             if (currentKeyboardState.IsKeyDown(Keys.Left))
-                SetRotationY(0.01f);
+                SetRotationY(0.04f);
 
             if (currentKeyboardState.IsKeyDown(Keys.Right))
-                SetRotationY(-0.01f);
-
-            if (currentKeyboardState.IsKeyDown(Keys.Space))
-                speed = 0.0f;
+                SetRotationY(-0.04f);
 
             if (currentKeyboardState.IsKeyDown(Keys.Up))
                 speed = 0.05f;
@@ -85,6 +82,8 @@ namespace XNA_TrabM2
             if (currentKeyboardState.IsKeyDown(Keys.Down))
                 speed = -0.05f;
 
+            if (currentKeyboardState.IsKeyUp(Keys.Up) && currentKeyboardState.IsKeyUp(Keys.Down))
+                speed = 0;
 
             // Re-calcula a direção "direita", que com as aproximações vai perdendo a precisão
             Vector3 right = Vector3.Cross(_direction, Vector3.Up);
@@ -118,12 +117,13 @@ namespace XNA_TrabM2
         {
             for (int i = 0; i < model.Meshes.Count; i++)
             {
-                // Check whether the bounding boxes of the two cubes intersect.
-                BoundingSphere boundingSphere = model.Meshes[i].BoundingSphere;
+                BoundingSphere boundingSphere;
+                boundingSphere.Radius = 0.5f;
                 boundingSphere.Center = _position;
                 for (int j = 0; j < modelo.model.Meshes.Count; j++)
                 {
                     BoundingSphere otherBoundingSphere = modelo.model.Meshes[j].BoundingSphere;
+                    otherBoundingSphere.Radius = 0.5f;
                     otherBoundingSphere.Center = modelo.position;
                     if (boundingSphere.Intersects(otherBoundingSphere))
                         return true;
