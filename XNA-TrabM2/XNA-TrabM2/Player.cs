@@ -71,16 +71,16 @@ namespace XNA_TrabM2
             //---  Move o cubo
             KeyboardState currentKeyboardState = Keyboard.GetState();
             if (currentKeyboardState.IsKeyDown(Keys.Left))
-                SetRotationY(0.04f);
+                SetRotationY(0.045f);
 
             if (currentKeyboardState.IsKeyDown(Keys.Right))
-                SetRotationY(-0.04f);
+                SetRotationY(-0.045f);
 
             if (currentKeyboardState.IsKeyDown(Keys.Up))
-                speed = 0.05f;
+                speed = 0.1f;
 
             if (currentKeyboardState.IsKeyDown(Keys.Down))
-                speed = -0.05f;
+                speed = -0.1f;
 
             if (currentKeyboardState.IsKeyUp(Keys.Up) && currentKeyboardState.IsKeyUp(Keys.Down))
                 speed = 0;
@@ -119,12 +119,12 @@ namespace XNA_TrabM2
             for (int i = 0; i < model.Meshes.Count; i++)
             {
                 BoundingSphere boundingSphere;
-                boundingSphere.Radius = 0.5f;
+                boundingSphere.Radius = 0.6f;
                 boundingSphere.Center = _position;
                 for (int j = 0; j < modelo.model.Meshes.Count; j++)
                 {
                     BoundingSphere otherBoundingSphere = modelo.model.Meshes[j].BoundingSphere;
-                    otherBoundingSphere.Radius = 0.5f;
+                    otherBoundingSphere.Radius = 0.6f;
                     otherBoundingSphere.Center = modelo.position;
                     if (boundingSphere.Intersects(otherBoundingSphere))
                         return true;
@@ -138,12 +138,12 @@ namespace XNA_TrabM2
             for (int i = 0; i < model.Meshes.Count; i++)
             {
                 BoundingSphere boundingSphere;
-                boundingSphere.Radius = 0.5f;
+                boundingSphere.Radius = 0.6f;
                 boundingSphere.Center = _position;
                 for (int j = 0; j < modelo.model.Meshes.Count; j++)
                 {
                     BoundingSphere otherBoundingSphere = modelo.model.Meshes[j].BoundingSphere;
-                    otherBoundingSphere.Radius = 0.5f;
+                    otherBoundingSphere.Radius = 0.6f;
                     otherBoundingSphere.Center = modelo.position;
                     if (boundingSphere.Intersects(otherBoundingSphere))
                         return true;
@@ -152,31 +152,23 @@ namespace XNA_TrabM2
             return false;
         }
 
-        // TODO Modo antigo 2D
-
-        //public Texture2D texture;
-        //public Vector2 position;
-        //public Vector2 blockPosition;
-        //public Vector2 oldBlockPosition;
-        //public Vector2 size;
-
-        //public Player(Texture2D texture, Vector2 blockPosition)
-        //{
-        //    this.texture = texture;
-        //    this.position = blockPosition * 25;
-        //    this.blockPosition = blockPosition;
-        //    this.size.X = texture.Width;
-        //    this.size.Y = texture.Height;
-        //}
-
-        //public void Update()
-        //{
-        //    position = blockPosition * 25;
-        //}
-
-        //public void Draw(SpriteBatch spriteBatch)
-        //{
-        //    spriteBatch.Draw(texture, position, Color.White);
-        //}
+        public bool CheckForCollisions(FinalBlock modelo)
+        {
+            for (int i = 0; i < model.Meshes.Count; i++)
+            {
+                BoundingSphere boundingSphere;
+                boundingSphere.Radius = 0.6f;
+                boundingSphere.Center = _position;
+                for (int j = 0; j < modelo.model.Meshes.Count; j++)
+                {
+                    BoundingSphere otherBoundingSphere = modelo.model.Meshes[j].BoundingSphere;
+                    otherBoundingSphere.Radius = 0.6f;
+                    otherBoundingSphere.Center = modelo.position;
+                    if (boundingSphere.Intersects(otherBoundingSphere))
+                        return true;
+                }
+            }
+            return false;
+        }
     }
 }

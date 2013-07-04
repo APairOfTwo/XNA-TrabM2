@@ -18,11 +18,7 @@ namespace XNA_TrabM2
         SpriteBatch spriteBatch;
         SpriteFont verdana;
 
-        Texture2D tileBlock;
-        Texture2D finalSprite;
-        Texture2D playerSprite;
         Texture2D timeBar;
-        Texture2D boosterSprite;
 
         Player player;
         Cube cube;
@@ -34,6 +30,7 @@ namespace XNA_TrabM2
         static List<Tile> tileMap;
         static List<Cube> cubeMap;
         static List<Booster> timeBoosters;
+
         char[][] map;
         char[][] map2;
         char[][] map3;
@@ -50,6 +47,7 @@ namespace XNA_TrabM2
         long totalTime = 1000;
         long timePassed = 0;
         int totalSecondsLeft = 10;
+        int score = 0;
 
         bool startGame = false;
         bool gameOver = false;
@@ -92,7 +90,7 @@ namespace XNA_TrabM2
         {
             camera = new ChaseCamera();
             // Set the camera offsets
-            camera.DesiredPositionOffset = new Vector3(0.0f, 2.0f, 5.0f);
+            camera.DesiredPositionOffset = new Vector3(0.0f, 2.0f, 3.0f);
             camera.LookAtOffset = new Vector3(0.0f, 1.0f, 0.0f);
             // Set the camera aspect ratio
             camera.AspectRatio = (float)device.Viewport.Width / device.Viewport.Height;
@@ -124,11 +122,7 @@ namespace XNA_TrabM2
 
             spriteBatch = new SpriteBatch(GraphicsDevice);
             verdana = Content.Load<SpriteFont>(@"Fonts\Verdana");
-            tileBlock = Content.Load<Texture2D>(@"Tiles\Block");
-            //playerSprite = Content.Load<Texture2D>(@"Sprites\Character");
             timeBar = Content.Load<Texture2D>(@"Sprites\TimeBar");
-            boosterSprite = Content.Load<Texture2D>(@"Sprites\Booster");
-            finalSprite = Content.Load<Texture2D>(@"Sprites\FinalBlock");
             
             tileMap = new List<Tile>();
             cubeMap = new List<Cube>();
@@ -140,9 +134,9 @@ namespace XNA_TrabM2
 
             loadMap(map);
 
-            botoes.Add(new clsButton(this, Content.Load<Texture2D>(@"botoes\blackBall"), Content.Load<Texture2D>(@"botoes\blueBall"), new Vector2(380, 200), new EventHandler(BotaoAzul_Click)));
-            botoes.Add(new clsButton(this, Content.Load<Texture2D>(@"botoes\blackBall"), Content.Load<Texture2D>(@"botoes\orangeBall"), new Vector2(380, 280), new EventHandler(BotaoLaranja_Click)));
-            botoes.Add(new clsButton(this, Content.Load<Texture2D>(@"botoes\blackBall"), Content.Load<Texture2D>(@"botoes\redBall"), new Vector2(380, 360), new EventHandler(BotaoVermelho_Click)));
+            botoes.Add(new clsButton(this, Content.Load<Texture2D>(@"botoes\yellow_button_start"), Content.Load<Texture2D>(@"botoes\blue_button_start"), new Vector2(330, 200), new EventHandler(BotaoAzul_Click)));
+            botoes.Add(new clsButton(this, Content.Load<Texture2D>(@"botoes\yellow_button_instructions"), Content.Load<Texture2D>(@"botoes\blue_button_instructions"), new Vector2(330, 280), new EventHandler(BotaoLaranja_Click)));
+            botoes.Add(new clsButton(this, Content.Load<Texture2D>(@"botoes\yellow_button_exit"), Content.Load<Texture2D>(@"botoes\blue_button_exit"), new Vector2(330, 360), new EventHandler(BotaoVermelho_Click)));
 
             telas.Add(Content.Load<Texture2D>(@"telas\Tela_Inicial"));
             telas.Add(Content.Load<Texture2D>(@"telas\Tela_Instrucoes"));
@@ -215,6 +209,30 @@ namespace XNA_TrabM2
                         }
                     }
 
+                    finalBlock.Update(gameTime);
+                    if (player.CheckForCollisions(finalBlock))
+                    {
+                        clearStage();
+
+                        if (mapCont == 1)
+                        {
+                            loadMap(map2);
+                            mapCont = 2;
+                            return;
+                        }
+                        if (mapCont == 2)
+                        {
+                            loadMap(map3);
+                            mapCont = 3;
+                            return;
+                        }
+                        if (mapCont == 3)
+                        {
+                            gameWin = true;
+                            gameOver = true;
+                        }
+                    }
+
                     // Atualiza a câmera para "perseguir" seu alvo
                     UpdateCamera(gameTime, player.position, player.direction);
 
@@ -258,29 +276,6 @@ namespace XNA_TrabM2
                     }
                 }
             }
-
-            //if (player.blockPosition == finalBlock.blockPosition)
-            //{
-            //    clearStage();
-
-            //    if (mapCont == 1)
-            //    {
-            //        loadMap(map2);
-            //        mapCont = 2;
-            //        return;
-            //    }
-            //    if (mapCont == 2)
-            //    {
-            //        loadMap(map3);
-            //        mapCont = 3;
-            //        return;
-            //    }
-            //    if (mapCont == 3)
-            //    {
-            //        gameWin = true;
-            //        gameOver = true;
-            //    }
-            //}
 
             base.Update(gameTime);
         }
@@ -344,11 +339,17 @@ namespace XNA_TrabM2
                         if(b.active)
                             b.Draw(camera.View, camera.Projection);
                     }
+
+                    finalBlock.Draw(camera.View, camera.Projection);
                     
                     player.Draw(camera.View, camera.Projection);
 
                     spriteBatch.Draw(timeBar, timeRect, Color.White);
-                    //finalBlock.Draw(spriteBatch);
+                }
+
+                if (startGame && gameWin)
+                {
+                    spriteBatch.DrawString(verdana, "Score: " + score, new Vector2(350, 230), Color.White);
                 }
             }
             spriteBatch.End();
@@ -402,6 +403,7 @@ namespace XNA_TrabM2
 
         public void clearStage()
         {
+            score += totalSecondsLeft;
             tileMap.Clear();
             cubeMap.Clear();
             timeBoosters.Clear();
@@ -438,7 +440,8 @@ namespace XNA_TrabM2
                     }
                     if (map[i][j] == 'F')
                     {
-                        finalBlock = new FinalBlock(finalSprite, new Vector2(j, i));
+                        finalBlock = new FinalBlock(new Vector3(j, 0.5f, i));
+                        finalBlock.LoadContent(Content);
                     }
                 }
             }

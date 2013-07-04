@@ -4,31 +4,47 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 
 namespace XNA_TrabM2
 {
     class FinalBlock
     {
-        public bool active;
-        public Texture2D texture;
-        public Vector2 position;
-        public Vector2 blockPosition;
-        public Vector2 size;
+        public Model model;
+        public Matrix world;
+        public Vector3 position = Vector3.Zero;
 
-        public FinalBlock(Texture2D texture, Vector2 blockPosition)
+        public FinalBlock(Vector3 position)
         {
-            this.active = true;
-            this.texture = texture;
-            this.position = blockPosition * 25;
-            this.blockPosition = blockPosition;
-            this.size.X = texture.Width;
-            this.size.Y = texture.Height;
+            this.position = position;
+            world *= Matrix.CreateTranslation(position);
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public void LoadContent(ContentManager content)
         {
-            if(active)
-                spriteBatch.Draw(texture, position, Color.White);
+            model = content.Load<Model>(@"Modelos\Cube");
+        }
+
+        public void Update(GameTime time)
+        {
+            world = Matrix.Identity;
+            world.Translation = position;
+        }
+
+        public void Draw(Matrix view, Matrix projection)
+        {
+            foreach (ModelMesh mesh in model.Meshes)
+            {
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    effect.World = world;
+                    effect.View = view;
+                    effect.Projection = projection;
+                    effect.DiffuseColor = new Vector3(0, 0, 255);
+                    effect.EnableDefaultLighting();
+                }
+                mesh.Draw();
+            }
         }
     }
 }
