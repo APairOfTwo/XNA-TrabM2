@@ -107,6 +107,7 @@ namespace XNA_TrabM2
                     effect.World = world; 
                     effect.View = view;
                     effect.Projection = projection;
+                    effect.DiffuseColor = new Vector3(255, 0, 0);
                     effect.EnableDefaultLighting();
                 }
                 mesh.Draw();

@@ -451,7 +451,7 @@ namespace XNA_TrabM2
                 {
                     if (map[i][j] == 'P')
                     {
-                        Cube c = new Cube(new Vector3(j*2, 0.5f, i*2));
+                        Cube c = new Cube(new Vector3(j * 2, 0.5f, i * 2));
                         c.LoadContent(Content);
                         cubeMap.Add(c);
                     }
